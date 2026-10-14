@@ -2,9 +2,15 @@
 
 internal class Program
 {
-    private static void Main(string[] args)
+    private static void Main()
     {
-        Node<int> first = new Node<int>(1, null);
-        Console.WriteLine(first.Data);
+        ListaInlantuita<int> lista = new ListaInlantuita<int>();
+
+        lista.Add(1);
+        lista.Add(2);
+        lista.Add(3);
+        lista.Insert(3, 20);
+        lista.RemoveAt(3);
+        Console.WriteLine(lista.Count);
     }
 }

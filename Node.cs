@@ -2,8 +2,13 @@
 {
     public class Node<T>
     {
-        public readonly T Data;
-        public readonly Node<T> Next;
+        public T Data;
+        public Node<T> Next;
+
+        public Node()
+        {
+            Next = null;
+        }
 
         public Node(T data, Node<T> next)
         {
