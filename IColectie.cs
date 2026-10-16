@@ -4,9 +4,9 @@
     {
         int Count { get; }
         void Add(T item);
-        bool Delete(T item);
+        bool Remove(T item);
         bool Contains(T item);
-        void Clear(T item);
+        void Clear();
         T[] AsVector();
     }
 }
