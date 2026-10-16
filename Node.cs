@@ -15,6 +15,5 @@
             Data = data;
             Next = next;
         }
-
     }
 }

@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Diagnostics.Metrics;
-using System.Runtime.Intrinsics.X86;
 
 namespace Colections
 {
@@ -15,13 +13,6 @@ namespace Colections
             Head = null;
             Tail = new Node<T>();
             Count = 0;
-        }
-
-        public ListaInlantuita(T data)
-        {
-            Count = 0;
-            Node<T> node = new Node<T>(data, null);
-            Head = Tail = node;
         }
 
         //ICollection
@@ -42,6 +33,8 @@ namespace Colections
 
         public bool Remove(T item)
         {
+            if(Head == null) return false;
+
             EqualityComparer<T> comparer = EqualityComparer<T>.Default;
 
             if (comparer.Equals(Head.Data, item))
@@ -52,47 +45,43 @@ namespace Colections
                 return true;
             }
 
-            Node<T> aux = Head;
+            Node<T> current = Head;
 
-            while (Head.Next != null) 
+            while (current.Next != null) 
             {
-                if(comparer.Equals(Head.Next.Data, item))
+                if(comparer.Equals(current.Next.Data, item))
                 {
-                    Head.Next = Head.Next.Next;
-                    if (Head.Next == null)
+                    current.Next = current.Next.Next;
+                    if (current.Next == null)
                     {
                         Tail = Head;
                     }
-                    Head = aux;
                     Count--;
 
                     return true;
                 }
 
-                Head = Head.Next;
+                current = current.Next;
             }
 
-            Head = aux;
             return false;
         }
 
         public bool Contains(T item)
         {
-            Node<T> aux = Head;
+            Node<T> current = Head;
             EqualityComparer<T> comparer = EqualityComparer<T>.Default;
 
-            while (Head != null) 
+            while (current != null) 
             {
-                if (comparer.Equals(Head.Data, item))
+                if (comparer.Equals(current.Data, item))
                 {
-                    Head = aux;
                     return true;
                 }
 
-                Head = Head.Next;
+                current = current.Next;
             }
 
-            Head = aux;
             return false;
         }
 
@@ -105,17 +94,16 @@ namespace Colections
 
         public T[] AsVector()
         {
-            Node<T> aux = Head;
-            T[] array = new T[Count];
+            Node<T> current = Head;
+            T[] array = new T[Count + 1];
             int index = 0;
 
-            while(Head != null)
+            while(current != null)
             {
-                array[index++] = Head.Data;
-                Head = Head.Next;
+                array[index++] = current.Data;
+                current = current.Next;
             }
 
-            Head = aux;
             return array;
         }
 
@@ -123,169 +111,178 @@ namespace Colections
 
         public void Insert(int index, T item) 
         {
-            if (index > Count) return;
+            if (Head == null)
+            {
+                Head = Tail = new Node<T>(item, null);
+                Count++;
+                return;
+            }
+
+            if (index > Count || index < 0) return;
 
             if (index == 0)
             {
-                Node<T> aux2 = new Node<T>(item, Head);
-                Head = aux2;
+                Head = new Node<T>(item, Head);
                 Count++;
 
                 return;
             }
 
-            Node<T> aux = Head;
+            Node<T> current = Head;
             int counter = 0;
             
-            while (Head != null) 
+            while (current != null) 
             {
                 if(counter + 1 == index)
                 {
-                    Node<T> aux2 = Head.Next;
-                    Head.Next = new Node<T>(item, aux2);
+                    Node<T> aux2 = current.Next;
+                    current.Next = new Node<T>(item, aux2);
 
-                    if (Tail.Next != null)
+                    if (aux2 == null)
                     {
                         Tail = Tail.Next;
                     }
-
-                    Head = aux;
                     Count++;
       
                     return;
                 }
 
-                Head = Head.Next;
+                current = current.Next;
                 counter++;
             }
-
-            Head = aux;
         }
 
         public void RemoveAt(int index)
         {
-            if(index > Count) return;
+            if (index >= Count || index < 0 || Head == null) return;
 
             if(index == 0)
             {
                 Head = Head.Next;
                 Count--;
+                return;
             }
 
-            Node<T> aux = Head;
+            Node<T> current = Head;
             int counter = 0;
 
-            while(Head.Next != null)
+            while(current.Next != null)
             {
                 if(counter + 1 == index)
                 {
-                    Head.Next = Head.Next.Next;
+                    current.Next = current.Next.Next;
 
-                    if(Head.Next == null)
+                    if(current.Next == null)
                     {
-                        Tail = Head;
+                        Tail = current;
                     }
-                    Head = aux;
                     Count--;
 
                     return;
                 }
 
-                Head = Head.Next;
+                current = current.Next;
                 counter++;
             }
-
-            Head.Next = null;
-            Tail = Head;
-            Count--;
-            Head = aux;
         }
 
         public int IndexOf(T item)
         {
-            Node<T> aux = Head;
+            Node<T> current = Head;
             EqualityComparer<T> comparer = EqualityComparer<T>.Default;
             int index = 0;
 
-            while (Head != null)
+            while (current != null)
             {
-                if(comparer.Equals(Head.Data, item))
+                if(comparer.Equals(current.Data, item))
                 {
-                    Head = aux;
                     return index;
                 }
 
                 index++;
-                Head = Head.Next;
+                current = current.Next;
             }
 
-            Head = aux;
             return -1;
         }
 
         public T this[int index] {
             get 
             { 
-                if(index > Count - 1)
+                if(index > Count - 1 || index < 0)
                 {
                     return default(T);
                 }
 
-                Node<T> aux = Head;
+                Node<T> current = Head;
                 int cnt = 0;
-                while (Head != null) 
+                while (current != null) 
                 {
                     if(cnt == index)
                     {
-                        T data = Head.Data;
-                        Head = aux;
+                        T data = current.Data;
                         return data;
                     }
 
                     cnt++;
-                    Head = Head.Next;
+                    current = current.Next;
                 }
 
-                Head = aux;
                 return default(T);
             }
             set 
             {
-                if (index > Count - 1)
+                if (index > Count - 1 || index < 0)
                 {
                     return;
                 }
 
-                Node<T> aux = Head;
+                Node<T> current = Head;
                 int cnt = 0;
-                while (Head != null)
+                while (current != null)
                 {
                     if (cnt == index)
                     {
-                        Head.Data = value;
-                        Head = aux;
+                        current.Data = value;
                         return;
                     }
 
                     cnt++;
-                    Head = Head.Next;
+                    current = current.Next;
                 }
 
-                Head = aux;
                 return;
             }
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            //yield ????
-            throw new NotImplementedException();
+            Node<T> current = Head;
+
+            while (current != null) 
+            {
+                yield return current.Data;
+                current = current.Next;
+            }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public override string ToString()
         {
-            //????
-            return GetEnumerator();
+            string text = "[";
+
+            if(Count > 0)
+            {
+                text += Head.Data; //???
+            }
+            foreach (T item in this) 
+            {
+                text += ", " + item;
+            }
+            text += "]";
+
+            return text;
         }
     }
 }

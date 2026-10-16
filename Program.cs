@@ -30,8 +30,45 @@ internal class Program
         Console.WriteLine(lista + " " + lista[0] + " Count=" + lista.Count);
     }
 
-    private static void Main()
+    static void Pas1()
     {
         DemoLista(new ListaInlantuita<string>());
+    }
+
+    static void Pas2()
+    {
+        ListaTablou<int> numere = new ListaTablou<int>();
+        Console.WriteLine($"Count={numere.Count} " +
+                          $"Capacitate={numere.Capacity}");
+        for (int i = 1; i <= 9; i++)
+        {
+            numere.Add(i * 10);
+            Console.WriteLine($"+{i * 10}: Count={numere.Count} " +
+                              $"Capacitate={numere.Capacity}");
+        }
+        Console.WriteLine("---");
+        DemoLista(new ListaTablou<string>());
+    }
+
+    private static void Main()
+    {
+        Pas2();
+
+        /*IEnumerable<string> Culori()
+        {
+            Console.WriteLine("  [metoda] dau rosu");
+            yield return "rosu";
+
+            Console.WriteLine("  [metoda] dau verde");
+            yield return "verde";
+
+            Console.WriteLine("  [metoda] dau albastru");
+            yield return "albastru";
+        }
+
+        foreach (string c in Culori())
+        {
+            Console.WriteLine("[foreach] am primit " + c);
+        }*/
     }
 }
