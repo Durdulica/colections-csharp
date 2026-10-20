@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using Colections.Colectii;
+using Colections.Common;
+using System.Collections;
 
 namespace Colections
 {
-    public class ListaInlantuita<T> : ILista<T>
+    public class ListaInlantuita<T> : ColectieAbstracta<T>, ILista<T> 
     {
         private Node<T> Head;
         private Node<T> Tail;
@@ -17,7 +19,7 @@ namespace Colections
 
         //ICollection
         
-        public void Add(T item)
+        public override void Add(T item)
         {
             if (Head == null)
             {
@@ -31,7 +33,7 @@ namespace Colections
             Count++;
         }
 
-        public bool Remove(T item)
+        public override bool Remove(T item)
         {
             if(Head == null) return false;
 
@@ -54,7 +56,7 @@ namespace Colections
                     current.Next = current.Next.Next;
                     if (current.Next == null)
                     {
-                        Tail = Head;
+                        Tail = current;
                     }
                     Count--;
 
@@ -67,42 +69,18 @@ namespace Colections
             return false;
         }
 
-        public bool Contains(T item)
-        {
-            Node<T> current = Head;
-            EqualityComparer<T> comparer = EqualityComparer<T>.Default;
-
-            while (current != null) 
-            {
-                if (comparer.Equals(current.Data, item))
-                {
-                    return true;
-                }
-
-                current = current.Next;
-            }
-
-            return false;
-        }
-
-        public void Clear()
+        public override void Clear()
         {
             Count = 0;
             Head = null;
             Tail = null;
         }
 
-        public T[] AsVector()
+        public override T[] ToArray()
         {
-            Node<T> current = Head;
-            T[] array = new T[Count + 1];
+            T[] array = new T[Count];
             int index = 0;
-
-            while(current != null)
-            {
-                array[index++] = current.Data;
-                current = current.Next;
-            }
+            for (Node<T> n = Head; n != null; n = n.Next) array[index++] = n.Data;
 
             return array;
         }
@@ -255,34 +233,6 @@ namespace Colections
             }
         }
 
-        public IEnumerator<T> GetEnumerator()
-        {
-            Node<T> current = Head;
-
-            while (current != null) 
-            {
-                yield return current.Data;
-                current = current.Next;
-            }
-        }
-
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        public override string ToString()
-        {
-            string text = "[";
-
-            if(Count > 0)
-            {
-                text += Head.Data; //???
-            }
-            foreach (T item in this) 
-            {
-                text += ", " + item;
-            }
-            text += "]";
-
-            return text;
-        }
     }
 }

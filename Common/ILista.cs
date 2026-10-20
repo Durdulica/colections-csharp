@@ -1,4 +1,4 @@
-﻿namespace Colections
+﻿namespace Colections.Common
 {
     public interface ILista<T> : IColectie<T>
     {

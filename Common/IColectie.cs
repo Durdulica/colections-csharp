@@ -1,4 +1,4 @@
-﻿namespace Colections
+﻿namespace Colections.Common
 {
     public interface IColectie<T> : IEnumerable<T>
     {
@@ -7,6 +7,6 @@
         bool Remove(T item);
         bool Contains(T item);
         void Clear();
-        T[] AsVector();
+        T[] ToArray();
     }
 }

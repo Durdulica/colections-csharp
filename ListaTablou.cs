@@ -1,45 +1,35 @@
 ﻿using System.Collections;
+using Colections.Colectii;
+using Colections.Common;
 
 namespace Colections
 {
-    public class ListaTablou<T> : ILista<T>
+    public class ListaTablou<T> : ColectieAbstracta<T>, ILista<T>
     {
         private T[] items = new T[4];
-        private int count = 0;
-
-        public int Count { get => count; }
         public int Capacity = 4;
 
         //IColectie
 
-        public void Add(T item)
+        public override void Add(T item)
         {
-            if (count == items.Length)
-            {
-                T[] newItems = new T[Capacity * 2];
-                Capacity *= 2;
-                for (int i = 0; i < count; i++)
-                {
-                    newItems[i] = items[i];
-                }
+            ResizeIfFull();
 
-                items = newItems;
-            }
-
-            items[count++] = item;
+            items[Count++] = item;
         }
 
-        public bool Remove(T item)
+        public override bool Remove(T item)
         {
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < Count; i++)
             {
-                if (items[i].Equals(item))
+                if (EqualityComparer<T>.Default.Equals(items[i], item))
                 {
-                    for (int j = i; j < count - 1; j++)
+                    for (int j = i; j < Count - 1; j++)
                     {
                         items[j] = items[j + 1];
                     }
-                    count--;
+                    items[Count] = default;
+                    Count--;
 
                     return true;
                 }
@@ -48,93 +38,53 @@ namespace Colections
             return false;
         }
 
-        public bool Contains(T item)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                if (items[i].Equals(item))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public void Clear()
+        public override void Clear()
         {
             items = new T[4];
-            count = 0;
+            Count = 0;
+            Capacity = 0;
         }
 
-        public T[] AsVector()
+        public override T[] ToArray()
         {
-            T[] vector = new T[count];
-
-            for(int i = 0; i < count; i++)
-            {
-                vector[i] = items[i];
-            }
-
-            return vector;
+            return items;
         }
 
         //ILista
 
         public void Insert(int index, T item)
         {
-            if (index > count || index < 0) return;
+            if (index > Count || index < 0) return;
 
-            if (count == items.Length)
+            ResizeIfFull();
+
+            for (int j = Count; j > index; j--)
             {
-                T[] newItems = new T[Capacity * 2];
-                Capacity *= 2;
-                for (int i = 0; i < count; i++)
-                {
-                    newItems[i] = items[i];
-                }
-
-                items = newItems;
+                items[j] = items[j - 1];
             }
 
-            for (int i = 0; i <= count; i++)
-            {
-                if (i == index)
-                {
-                    for (int j = count; j > i; j--)
-                    {
-                        items[j] = items[j - 1];
-                    }
+            items[index] = item;
+            Count++;
 
-                    items[i] = item;
-                    count++;
-                }
-            }
         }
 
         public void RemoveAt(int index)
         {
-            if (index > count || index < 0) return;
+            if (index > Count || index < 0) return;
 
-            for (int i = 0; i < count; i++)
+            for (int j = index; j < Count - 1; j++)
             {
-                if (i == index)
-                {
-                    for (int j = i; j < count - 1; j++)
-                    {
-                        items[j] = items[j + 1];
-                    }
-
-                    count--;
-                }
+                items[j] = items[j + 1];
             }
+            items[Count] = default;
+            Count--;
         }
 
         public int IndexOf(T item)
         {
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < Count; i++)
             {
-                if (items[i].Equals(item))
+                if (EqualityComparer<T>.Default.Equals(items[i], item))
                 {
                     return i;
                 }
@@ -149,34 +99,23 @@ namespace Colections
             set { items[index] = value; }
         }
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
-        {
-            for (int i = 0; i < count; i++)
-            {
-                yield return items[i];
-            }
-        }
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable<T>)this).GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
+        private void ResizeIfFull()
         {
-            throw new NotImplementedException();
-        }
-
-        public override string ToString()
-        {
-            string text = "[";
-            for(int i = 0; i < count; i++)
+            if (Count == items.Length)
             {
-                if (i + 1 == count)
+                
+                T[] newItems = new T[Count + 1];
+                if(Count == Capacity) Capacity *= 2;
+                
+                for (int i = 0; i < Count; i++)
                 {
-                    text += items[i];
+                    newItems[i] = items[i];
                 }
-                else {
-                    text += items[i] + ", "; }
-            }
 
-            text += "]";
-            return text;
+                items = newItems;
+            }
         }
     }
 }

@@ -1,7 +1,30 @@
 ﻿using Colections;
+using Colections.Common;
+using System.Collections;
+using System.Linq;
 
 internal class Program
 {
+    static void ExYield()
+    {
+        static IEnumerable<string> Culori()
+        {
+            Console.WriteLine("  [metoda] dau rosu");
+            yield return "rosu";
+
+            Console.WriteLine("  [metoda] dau verde");
+            yield return "verde";
+
+            Console.WriteLine("  [metoda] dau albastru");
+            yield return "albastru";
+        }
+
+        foreach (string c in Culori())
+        {
+            Console.WriteLine("[foreach] am primit " + c);
+        }
+    }
+
     static void DemoLista(ILista<string> lista)
     {
         Console.WriteLine(lista + " Count=" + lista.Count);
@@ -24,7 +47,7 @@ internal class Program
             Console.Write(s + ";");
         }
         Console.WriteLine();
-        Console.WriteLine(string.Join("|", lista.AsVector()));
+        Console.WriteLine(string.Join("|", lista.ToArray()));
         lista.Clear();
         lista.Add("z");
         Console.WriteLine(lista + " " + lista[0] + " Count=" + lista.Count);
@@ -37,7 +60,7 @@ internal class Program
 
     static void Pas2()
     {
-        ListaTablou<int> numere = new ListaTablou<int>();
+        ListaTablou<int> numere = new();
         Console.WriteLine($"Count={numere.Count} " +
                           $"Capacitate={numere.Capacity}");
         for (int i = 1; i <= 9; i++)
@@ -50,25 +73,55 @@ internal class Program
         DemoLista(new ListaTablou<string>());
     }
 
+    static void Pas3()
+    {
+        IColectie<int>[] colectii =  { new ListaInlantuita<int>(), new ListaTablou<int>() };
+
+        foreach (IColectie<int> patrate in colectii)
+        {
+            for (int i = 1; i <= 5; i++)
+            {
+                patrate.Add(i * i);
+            }
+            Console.WriteLine(patrate);
+            Console.WriteLine(patrate.Contains(16) + " " + patrate.Contains(15));
+            int[] tablou = patrate.ToArray();
+            Console.WriteLine(tablou.Length + " " + tablou[4]);
+        }
+    }
+
+    static void Pas4()
+    {
+        StivaTablou<char> stiva = new StivaTablou<char>();
+        foreach (char c in "abcde")
+        {
+            stiva.Push(c);
+        }
+        Console.WriteLine(stiva + " Varf=" + stiva.Peek());
+        Console.WriteLine(stiva.Pop() + " " + stiva.Pop() + " " + stiva);
+
+        CoadaCirculara<int> coada = new CoadaCirculara<int>();
+        for (int i = 1; i <= 4; i++)
+        {
+            coada.Push(i * 10);
+        }
+        Console.WriteLine(coada + " Capacitate=" + coada.Capacity);
+        Console.WriteLine(coada.Pop() + " " + coada.Pop());
+        coada.Push(50);
+        coada.Push(60);
+        Console.WriteLine(coada + " Capacitate=" + coada.Capacity);
+        coada.Remove(30);
+        Console.WriteLine(coada + " Primul=" + coada.First());
+        coada.Push(70);
+        coada.Push(80);
+        Console.WriteLine(coada + " Capacitate=" + coada.Capacity);
+    }
     private static void Main()
     {
-        Pas2();
-
-        /*IEnumerable<string> Culori()
-        {
-            Console.WriteLine("  [metoda] dau rosu");
-            yield return "rosu";
-
-            Console.WriteLine("  [metoda] dau verde");
-            yield return "verde";
-
-            Console.WriteLine("  [metoda] dau albastru");
-            yield return "albastru";
-        }
-
-        foreach (string c in Culori())
-        {
-            Console.WriteLine("[foreach] am primit " + c);
-        }*/
+        //Pas1();
+        //Pas2();
+        //Pas3();
+        //Pas4();
+        IDictionary
     }
 }
